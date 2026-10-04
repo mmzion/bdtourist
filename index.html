@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>আমার বাংলাদেশ — ভ্রমণ ম্যাপ</title>
-<meta name="description" content="বাংলাদেশের ৬৪ জেলার ইন্টারঅ্যাক্টিভ ভ্রমণ ম্যাপ — কোনো API key ছাড়াই।">
+<title>আমার বাংলাদেশ</title>
+<meta name="description" content="বাংলাদেশের ৬৪ জেলার ইন্টারঅ্যাক্টিভ ভ্রমণ ম্যাপ।">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23006A4E'/><circle cx='50' cy='50' r='26' fill='%23F42A41'/></svg>">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Leaflet — ফ্রি, ওপেন সোর্স, কোনো API key নেই -->
+<!-- Leaflet — 100% ফ্রি -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -22,14 +22,12 @@
   --green-dark:#00432f;
   --green-light:#0b8a67;
   --red:#F42A41;
-  --cream:#f4f7f4;
   --ink:#0f231c;
   --muted:#5f7068;
+  --cream:#f4f7f4;
   --line:#e0e7e2;
-  --card:#ffffff;
-  --shadow-sm:0 2px 10px rgba(0,60,44,.06);
-  --shadow:0 8px 30px rgba(0,60,44,.15);
-  --shadow-lg:0 20px 60px rgba(0,60,44,.25);
+  --card:#fff;
+  --shadow:0 8px 30px rgba(0,60,44,.18);
 }
 html,body{height:100%;overflow:hidden}
 body{
@@ -92,16 +90,24 @@ img{max-width:100%;display:block}
 }
 .leaflet-control-zoom-in{border-bottom:1px solid var(--line)!important}
 
+/* জেলা মার্কার */
+.district-marker{
+  transition:filter .2s;
+}
+.district-marker:hover{
+  filter:drop-shadow(0 0 8px rgba(0,106,78,.8));
+}
+
 /* টুলটিপ */
 .leaflet-tooltip.district-tip{
   font-family:'Hind Siliguri',sans-serif;
   font-weight:600;
-  font-size:.82rem;
+  font-size:.85rem;
   background:var(--green-dark);
   color:#fff;
   border:none;
   border-radius:8px;
-  padding:4px 11px;
+  padding:5px 12px;
   box-shadow:0 4px 14px rgba(0,0,0,.3);
 }
 .leaflet-tooltip.district-tip::before{border-top-color:var(--green-dark)}
@@ -111,17 +117,17 @@ img{max-width:100%;display:block}
 /* পপআপ */
 .leaflet-popup-content-wrapper{
   border-radius:16px!important;
-  box-shadow:var(--shadow-lg)!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.25)!important;
   padding:0!important;
   overflow:hidden;
 }
 .leaflet-popup-content{
   margin:0!important;
-  min-width:260px;
+  min-width:250px;
   line-height:1.5;
 }
 .leaflet-popup-tip{
-  box-shadow:var(--shadow)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.2)!important;
 }
 .leaflet-popup-close-button{
   color:#fff!important;
@@ -130,7 +136,6 @@ img{max-width:100%;display:block}
   width:28px!important;
   height:28px!important;
   font-size:20px!important;
-  font-weight:400!important;
   border-radius:50%;
   display:grid!important;
   place-items:center;
@@ -199,30 +204,28 @@ img{max-width:100%;display:block}
   position:fixed;
   top:0;left:0;right:0;
   z-index:1000;
-  background:linear-gradient(135deg,rgba(0,106,78,.97),rgba(0,67,47,.97));
+  background:linear-gradient(135deg,rgba(0,106,78,.98),rgba(0,67,47,.98));
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   color:#fff;
-  padding:12px 20px;
+  padding:14px 22px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:14px;
-  box-shadow:0 4px 20px rgba(0,0,0,.18);
-  transition:transform .3s;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
 }
 .brand{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:13px;
   font-weight:700;
-  font-size:1.15rem;
-  letter-spacing:.2px;
+  letter-spacing:.3px;
   cursor:pointer;
   user-select:none;
 }
 .brand-mark{
-  width:30px;height:30px;
+  width:32px;height:32px;
   border-radius:50%;
   background:var(--red);
   box-shadow:0 0 0 3px rgba(255,255,255,.25);
@@ -233,36 +236,38 @@ img{max-width:100%;display:block}
 .brand-mark::after{
   content:"";
   position:absolute;
-  inset:-4px;
+  inset:-5px;
   border-radius:50%;
   border:1px solid rgba(255,255,255,.15);
 }
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 3px rgba(255,255,255,.25)}
-  50%{box-shadow:0 0 0 8px rgba(255,255,255,.08)}
+  50%{box-shadow:0 0 0 9px rgba(255,255,255,.06)}
 }
-.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.15;
+}
+.brand-text b{
+  font-size:1.25rem;
+  font-weight:700;
+}
 .brand-text small{
-  font-size:.72rem;
+  font-size:.75rem;
   font-weight:400;
-  opacity:.75;
+  opacity:.8;
   letter-spacing:.3px;
 }
-.brand-text b{font-size:1.08rem;font-weight:700}
 
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
 .header-stats{
   display:flex;
-  gap:16px;
-  padding:7px 16px;
+  gap:14px;
+  padding:8px 18px;
   background:rgba(255,255,255,.12);
   border-radius:999px;
-  font-size:.85rem;
-  border:1px solid rgba(255,255,255,.1);
+  font-size:.88rem;
+  border:1px solid rgba(255,255,255,.12);
 }
 .header-stats > div{
   display:flex;
@@ -273,30 +278,17 @@ img{max-width:100%;display:block}
 .header-stats b{
   color:#ffd166;
   font-weight:700;
-  font-size:1rem;
+  font-size:1.05rem;
 }
 .header-stats span{opacity:.9}
-
-.menu-btn{
-  width:42px;height:42px;
-  border-radius:12px;
-  background:rgba(255,255,255,.14);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  transition:.2s;
-}
-.menu-btn:hover{background:rgba(255,255,255,.25)}
-.menu-btn svg{width:22px;height:22px}
 
 /* ============ ফ্লোটিং সার্চ ============ */
 .search-wrap{
   position:fixed;
-  top:80px;
+  top:88px;
   left:20px;
   z-index:900;
-  width:min(360px,calc(100vw - 40px));
-  pointer-events:auto;
+  width:min(370px,calc(100vw - 40px));
 }
 .search-box{
   background:#fff;
@@ -309,7 +301,7 @@ img{max-width:100%;display:block}
   transition:.25s;
 }
 .search-box:focus-within{
-  box-shadow:0 12px 40px rgba(0,106,78,.2);
+  box-shadow:0 12px 40px rgba(0,106,78,.25);
   border-color:var(--green);
 }
 .search-box svg{
@@ -346,38 +338,37 @@ img{max-width:100%;display:block}
 /* ============ লেজেন্ড ============ */
 .legend{
   position:fixed;
-  top:80px;
+  top:88px;
   right:20px;
   z-index:900;
   background:#fff;
   border-radius:14px;
   box-shadow:var(--shadow);
-  padding:11px 16px;
+  padding:13px 18px;
   display:flex;
   flex-direction:column;
-  gap:8px;
-  font-size:.82rem;
+  gap:9px;
+  font-size:.85rem;
   font-weight:500;
   color:var(--muted);
-  min-width:150px;
+  min-width:160px;
 }
 .legend-title{
-  font-weight:600;
+  font-weight:700;
   color:var(--green-dark);
-  font-size:.78rem;
-  text-transform:uppercase;
+  font-size:.8rem;
   letter-spacing:.5px;
   margin-bottom:2px;
-  padding-bottom:6px;
+  padding-bottom:8px;
   border-bottom:1px dashed var(--line);
 }
 .legend-item{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:9px;
 }
 .legend-item i{
-  width:12px;height:12px;
+  width:13px;height:13px;
   border-radius:50%;
   flex:none;
   display:block;
@@ -385,29 +376,29 @@ img{max-width:100%;display:block}
 .dot-v{background:var(--green);box-shadow:0 0 0 3px rgba(0,106,78,.18)}
 .dot-u{background:#b9c3bd;box-shadow:0 0 0 3px rgba(185,195,189,.3)}
 
-/* ============ ম্যাপ হিন্ট ============ */
+/* ============ হিন্ট ============ */
 .map-hint{
   position:fixed;
   bottom:24px;
   left:50%;
   transform:translateX(-50%);
   z-index:900;
-  background:rgba(0,67,47,.92);
+  background:rgba(0,67,47,.95);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   color:#fff;
   border-radius:999px;
-  padding:10px 22px;
-  font-size:.87rem;
+  padding:11px 24px;
+  font-size:.88rem;
   font-weight:500;
-  box-shadow:var(--shadow-lg);
+  box-shadow:0 12px 32px rgba(0,0,0,.28);
   display:flex;
   align-items:center;
   gap:9px;
   animation:fadeInUp .6s .3s both;
   pointer-events:none;
 }
-.map-hint span{font-size:1.1rem}
+.map-hint span{font-size:1.15rem}
 @keyframes fadeInUp{
   from{opacity:0;transform:translateX(-50%) translateY(20px)}
   to{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -423,7 +414,7 @@ img{max-width:100%;display:block}
   background:#fff;
   border-radius:16px;
   box-shadow:var(--shadow);
-  padding:12px 18px;
+  padding:12px 20px;
   display:flex;
   align-items:center;
   gap:14px;
@@ -431,7 +422,7 @@ img{max-width:100%;display:block}
 }
 .ring{
   --p:0;
-  width:58px;height:58px;
+  width:60px;height:60px;
   border-radius:50%;
   background:conic-gradient(var(--red) calc(var(--p)*1%),#e4e9e5 0);
   display:grid;
@@ -451,23 +442,75 @@ img{max-width:100%;display:block}
 .ring b{
   position:relative;
   z-index:2;
-  font-size:.92rem;
+  font-size:.95rem;
   font-weight:700;
   color:var(--green-dark);
 }
 .pill-text{line-height:1.25}
 .pill-text b{
   display:block;
-  font-size:1.05rem;
+  font-size:1.08rem;
   font-weight:700;
   color:var(--green-dark);
 }
 .pill-text span{
-  font-size:.76rem;
+  font-size:.78rem;
   color:var(--muted);
 }
 
-/* ============ সাইড প্যানেল ============ */
+/* ============ ফুটার (♥ + ফেসবুক) ============ */
+.footer-bar{
+  position:fixed;
+  bottom:24px;
+  right:20px;
+  z-index:900;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:rgba(0,67,47,.95);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  color:#fff;
+  padding:10px 20px;
+  border-radius:999px;
+  box-shadow:0 12px 32px rgba(0,0,0,.28);
+  font-size:.85rem;
+  font-weight:500;
+}
+.footer-bar .heart{
+  color:var(--red);
+  font-size:1.15rem;
+  animation:beat 1.6s ease-in-out infinite;
+  display:inline-block;
+}
+@keyframes beat{
+  0%,100%{transform:scale(1)}
+  20%{transform:scale(1.25)}
+  40%{transform:scale(1)}
+  60%{transform:scale(1.15)}
+}
+.footer-bar .fb-link{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 14px;
+  border-radius:999px;
+  background:#1877F2;
+  color:#fff;
+  font-weight:600;
+  font-size:.83rem;
+  transition:.22s;
+}
+.footer-bar .fb-link:hover{
+  background:#0a5ecc;
+  transform:translateY(-1px);
+}
+.footer-bar .fb-link svg{
+  width:14px;height:14px;
+  fill:#fff;
+}
+
+/* ============ প্যানেল ============ */
 .panel-overlay{
   position:fixed;
   inset:0;
@@ -490,7 +533,7 @@ img{max-width:100%;display:block}
   z-index:1200;
   display:flex;
   flex-direction:column;
-  box-shadow:-10px 0 50px rgba(0,60,44,.2);
+  box-shadow:-10px 0 50px rgba(0,60,44,.25);
   transform:translateX(100%);
   transition:transform .4s cubic-bezier(.22,1,.36,1);
 }
@@ -587,7 +630,6 @@ img{max-width:100%;display:block}
   flex:1;
   overflow-y:auto;
   padding:14px;
-  scrollbar-width:thin;
 }
 .panel-list::-webkit-scrollbar{width:8px}
 .panel-list::-webkit-scrollbar-track{background:transparent}
@@ -595,7 +637,6 @@ img{max-width:100%;display:block}
   background:#cdd9d2;
   border-radius:99px;
 }
-.panel-list::-webkit-scrollbar-thumb:hover{background:#a8b8ae}
 
 .district-item{
   background:#fff;
@@ -612,7 +653,7 @@ img{max-width:100%;display:block}
 }
 .district-item:hover{
   transform:translateX(-3px);
-  box-shadow:var(--shadow-sm);
+  box-shadow:0 4px 14px rgba(0,60,44,.08);
   border-color:#cfe0d8;
 }
 .district-item.visited{
@@ -678,10 +719,10 @@ img{max-width:100%;display:block}
   padding:60px 20px;
   color:var(--muted);
 }
-.empty-state svg{opacity:.3;margin-bottom:14px;width:54px;height:54px}
+.empty-state svg{opacity:.3;margin-bottom:14px}
 .empty-state p{font-size:.92rem}
 
-/* ============ মোডাল (ডিটেইল) ============ */
+/* ============ মডাল ============ */
 .modal-overlay{
   position:fixed;
   inset:0;
@@ -792,14 +833,11 @@ img{max-width:100%;display:block}
   background:var(--red);
   box-shadow:0 8px 24px rgba(244,42,65,.32);
 }
-.visit-btn.active:hover{
-  box-shadow:0 12px 30px rgba(244,42,65,.4);
-}
 
 /* ============ টোস্ট ============ */
 .toast{
   position:fixed;
-  bottom:100px;
+  bottom:110px;
   left:50%;
   transform:translateX(-50%) translateY(20px);
   background:var(--green-dark);
@@ -827,55 +865,55 @@ img{max-width:100%;display:block}
 
 /* ============ রেসপন্সিভ ============ */
 @media(max-width:900px){
-  .header{padding:10px 14px}
-  .brand-text small{display:none}
-  .brand-text b{font-size:1rem}
-  .header-stats{padding:6px 12px;gap:12px;font-size:.8rem}
-  .header-stats b{font-size:.92rem}
-  .menu-btn{display:flex}
+  .header{padding:12px 16px}
+  .brand-text b{font-size:1.05rem}
+  .brand-text small{font-size:.7rem}
+  .brand-mark{width:28px;height:28px}
+  .header-stats{padding:6px 12px;gap:10px;font-size:.8rem}
+  .header-stats b{font-size:.95rem}
   .legend{
     top:auto;
     bottom:100px;
     right:14px;
-    padding:9px 13px;
+    padding:10px 14px;
     min-width:auto;
   }
   .legend-title{display:none}
   .legend-item{font-size:.78rem}
   .search-wrap{
-    top:70px;
+    top:78px;
     left:14px;
     width:calc(100vw - 28px);
   }
-}
-@media(max-width:640px){
-  .header-stats{padding:5px 10px;gap:8px;font-size:.74rem}
-  .header-stats > div:last-child{display:none}
-  .brand-mark{width:26px;height:26px}
   .progress-pill{
     bottom:18px;
     left:14px;
-    padding:9px 14px;
-    gap:11px;
+    padding:10px 16px;
+    gap:12px;
   }
-  .ring{width:48px;height:48px}
-  .ring b{font-size:.8rem}
-  .pill-text b{font-size:.92rem}
-  .pill-text span{font-size:.7rem}
-  .map-hint{
-    bottom:82px;
-    font-size:.8rem;
-    padding:8px 16px;
-  }
-  .legend{
-    bottom:auto;
-    top:130px;
+  .ring{width:52px;height:52px}
+  .ring b{font-size:.85rem}
+  .pill-text b{font-size:1rem}
+  .footer-bar{
+    bottom:18px;
     right:14px;
+    padding:8px 14px;
+    font-size:.78rem;
+    gap:10px;
   }
-  .modal-head h2{font-size:1.3rem}
-  .modal-body{padding:16px 20px 20px}
-  .visit-btn{margin:0 20px 18px;width:calc(100% - 40px)}
-  .panel{width:100vw}
+  .footer-bar .fb-link{padding:5px 11px;font-size:.78rem}
+  .map-hint{
+    bottom:90px;
+    font-size:.8rem;
+    padding:9px 18px;
+  }
+}
+@media(max-width:640px){
+  .header-stats > div:last-child{display:none}
+  .brand-text small{display:none}
+  .brand-text b{font-size:1rem}
+  .legend{display:none}
+  .footer-bar .fb-text{display:none}
 }
 @media(max-width:420px){
   .progress-pill{
@@ -883,7 +921,12 @@ img{max-width:100%;display:block}
     transform:translateX(-50%);
     bottom:16px;
   }
-  .legend{display:none}
+  .footer-bar{
+    bottom:78px;
+    left:50%;
+    right:auto;
+    transform:translateX(-50%);
+  }
 }
 </style>
 </head>
@@ -902,16 +945,9 @@ img{max-width:100%;display:block}
     </span>
   </div>
 
-  <div class="header-actions">
-    <div class="header-stats">
-      <div><b id="navVisited">০</b> <span>/ ৬৪ জেলা</span></div>
-      <div><b id="navPct">০%</b> <span>সম্পন্ন</span></div>
-    </div>
-    <button class="menu-btn" id="menuBtn" aria-label="মেনু">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-        <path d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
+  <div class="header-stats">
+    <div><b id="navVisited">০</b> <span>/ ৬৪ জেলা</span></div>
+    <div><b id="navPct">০%</b> <span>সম্পন্ন</span></div>
   </div>
 </header>
 
@@ -934,9 +970,9 @@ img{max-width:100%;display:block}
   <div class="legend-item"><i class="dot-u"></i> বাকি আছে</div>
 </div>
 
-<!-- ============ ম্যাপ হিন্ট ============ -->
+<!-- ============ হিন্ট ============ -->
 <div class="map-hint" id="mapHint">
-  <span>👆</span> ম্যাপে যেকোনো জেলায় ক্লিক করুন
+  <span>👇</span> ম্যাপে যেকোনো জেলায় ক্লিক করুন
 </div>
 
 <!-- ============ প্রোগ্রেস ============ -->
@@ -948,6 +984,15 @@ img{max-width:100%;display:block}
     <b><span id="progressVisited">০</span> জেলা</b>
     <span>ভ্রমণ সম্পন্ন</span>
   </div>
+</div>
+
+<!-- ============ ফুটার (♥ + Facebook) ============ -->
+<div class="footer-bar">
+  <span class="heart">♥</span>
+  <a href="https://www.facebook.com/sabbirhossien.robin/" target="_blank" class="fb-link" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.03 4.39 11.03 10.13 11.93v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+    <span class="fb-text">Facebook</span>
+  </a>
 </div>
 
 <!-- ============ সাইড প্যানেল ============ -->
@@ -968,7 +1013,7 @@ img{max-width:100%;display:block}
       </div>
       <div class="pill-text">
         <b><span id="panelVisited">০</span> জেলা</b>
-        <span>ভ্রমণ সম্পন্ন • <span id="panelRemain">৬৪</span> বাকি</span>
+        <span>সম্পন্ন • <span id="panelRemain">৬৪</span> বাকি</span>
       </div>
     </div>
   </div>
@@ -1279,7 +1324,7 @@ const DISTRICTS = [
 ];
 
 const DIVISIONS = ["ঢাকা","চট্টগ্রাম","রাজশাহী","খুলনা","বরিশাল","সিলেট","রংপুর","ময়মনসিংহ"];
-const STORAGE_KEY = "bd_tourist_visited_home_v1";
+const STORAGE_KEY = "bd_tourist_visited_home_v2";
 
 const BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
 const bn = n => String(n).replace(/\d/g, d => BN[+d]);
@@ -1302,7 +1347,7 @@ function toggleVisited(id){
 const getDistrict = id => DISTRICTS.find(d => d.id === id);
 
 /* ============================================================
-   ম্যাপ সেটআপ — OpenStreetMap (100% ফ্রি, কোনো API key নেই)
+   ম্যাপ — OpenStreetMap (100% ফ্রি, কোনো API key নেই)
    ============================================================ */
 let map, markers = {};
 let visited = getVisited();
@@ -1312,7 +1357,6 @@ function initMap(){
   map = L.map('map', {
     zoomControl: false,
     scrollWheelZoom: true,
-    worldCopyJump: false,
     minZoom: 6,
     maxZoom: 12,
     maxBounds: [[19.5, 86.5], [27.5, 94.0]],
@@ -1322,8 +1366,7 @@ function initMap(){
   /* ===== ফ্রি টাইল — OpenStreetMap ===== */
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-    crossOrigin: true
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
   }).addTo(map);
 
   /* জুম কন্ট্রোল ডান-নিচে */
@@ -1336,7 +1379,8 @@ function initMap(){
       color: "#ffffff",
       weight: 2.5,
       fillColor: "#b9c3bd",
-      fillOpacity: 1
+      fillOpacity: 1,
+      className: "district-marker"
     }).addTo(map);
 
     m.bindTooltip(d.name, {
@@ -1397,7 +1441,7 @@ function openPopup(d, m){
     </div>
   `;
 
-  const popup = L.popup({
+  L.popup({
     maxWidth: 280,
     minWidth: 260,
     closeButton: true,
@@ -1441,16 +1485,13 @@ function updateStats(){
   const count = visited.size;
   const pct = Math.round((count / total) * 100);
 
-  // হেডার
   document.getElementById('navVisited').textContent = bn(count);
   document.getElementById('navPct').textContent = bn(pct) + '%';
 
-  // প্রোগ্রেস পিল
   document.getElementById('progressPct').textContent = bn(pct) + '%';
   document.getElementById('progressRing').style.setProperty('--p', pct);
   document.getElementById('progressVisited').textContent = bn(count);
 
-  // প্যানেল
   document.getElementById('panelPct').textContent = bn(pct) + '%';
   document.getElementById('panelRing').style.setProperty('--p', pct);
   document.getElementById('panelVisited').textContent = bn(count);
@@ -1474,7 +1515,6 @@ function closePanel(){
   panelOverlay.classList.remove('open');
 }
 
-document.getElementById('menuBtn').addEventListener('click', openPanel);
 document.getElementById('closePanel').addEventListener('click', closePanel);
 panelOverlay.addEventListener('click', closePanel);
 
@@ -1516,7 +1556,7 @@ function renderPanelList(){
   if (!filtered.length){
     list.innerHTML = `
       <div class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
           <circle cx="11" cy="11" r="7"></circle>
           <path d="M20 20l-3.5-3.5"></path>
         </svg>
@@ -1558,6 +1598,12 @@ const clearBtn = document.getElementById('clearBtn');
 searchInput.addEventListener('input', e => {
   searchQuery = e.target.value;
   clearBtn.classList.toggle('show', searchQuery.length > 0);
+  if (currentDiv === 'সব' && !searchQuery){
+    // if empty, do nothing
+  }
+  if (!panel.classList.contains('open') && searchQuery.length > 0){
+    openPanel();
+  }
   renderPanelList();
 });
 
@@ -1571,6 +1617,7 @@ searchInput.addEventListener('keydown', e => {
       x.spots.some(s => s[0].toLowerCase().includes(q))
     );
     if (found){
+      closePanel();
       map.flyTo([found.lat, found.lng], 9, { duration: 0.9 });
       setTimeout(() => openPopup(found, markers[found.id]), 950);
       hideHint();
@@ -1665,7 +1712,7 @@ function showToast(msg, red=false){
 }
 
 /* ============================================================
-   ম্যাপ হিন্ট হাইড
+   হিন্ট হাইড
    ============================================================ */
 function hideHint(){
   const h = document.getElementById('mapHint');
