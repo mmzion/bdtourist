@@ -3,483 +3,751 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>আমার বাংলাদেশ — সম্পূর্ণ ভ্রমণ গাইড</title>
-<meta name="description" content="বাংলাদেশের ৬৪ জেলার দর্শনীয় স্থান, ভ্রমণ গাইড ও ভ্রমণ অগ্রগতির ম্যাপ।">
+<title>আমার বাংলাদেশ — ভ্রমণ ম্যাপ ও গাইড</title>
+<meta name="description" content="বাংলাদেশের ৬৪ জেলার দর্শনীয় স্থান, ইন্টারঅ্যাক্টিভ ম্যাপ ও ভ্রমণ অগ্রগতি ট্র্যাকার।">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23006A4E'/><circle cx='50' cy='50' r='26' fill='%23F42A41'/></svg>">
 
-<!-- বাংলা ফন্ট -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Leaflet ম্যাপ -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-/* ============ বেসিক ============ */
+/* ================= বেসিক ================= */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --green:#006A4E;
   --green-dark:#00432f;
   --green-light:#0b8a67;
   --red:#F42A41;
-  --cream:#f6f4ee;
+  --cream:#f4f7f4;
   --ink:#0f231c;
-  --muted:#5c6b64;
-  --line:#e2e7e3;
+  --muted:#5f7068;
+  --line:#e0e7e2;
   --card:#ffffff;
-  --shadow:0 4px 20px rgba(0,60,44,.08);
-  --shadow-lg:0 14px 40px rgba(0,60,44,.16);
+  --shadow-sm:0 2px 10px rgba(0,60,44,.06);
+  --shadow:0 8px 30px rgba(0,60,44,.12);
+  --shadow-lg:0 20px 60px rgba(0,60,44,.2);
 }
-html{scroll-behavior:smooth}
+html,body{height:100%}
 body{
   font-family:'Hind Siliguri',system-ui,-apple-system,sans-serif;
   background:var(--cream);
   color:var(--ink);
-  line-height:1.75;
-  overflow-x:hidden;
+  line-height:1.65;
+  overflow:hidden;
 }
-img{max-width:100%;display:block}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
+input{font-family:inherit}
 a{text-decoration:none;color:inherit}
-.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
 
-/* ============ হেডার ============ */
+/* ================= লেআউট ================= */
+.app{
+  display:grid;
+  grid-template-rows:auto 1fr;
+  height:100vh;
+  height:100dvh;
+}
+
+/* ================= হেডার ================= */
 header{
-  position:sticky;top:0;z-index:1200;
-  background:rgba(0,106,78,.96);
-  backdrop-filter:blur(10px);
+  background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);
   color:#fff;
-  box-shadow:0 2px 18px rgba(0,0,0,.15);
+  padding:0;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  position:relative;
+  z-index:1000;
 }
 .nav{
-  max-width:1200px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;padding:12px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 22px;
+  gap:16px;
+  flex-wrap:wrap;
 }
-.logo{display:flex;align-items:center;gap:11px;font-weight:700;font-size:1.18rem;letter-spacing:.2px}
-.logo-mark{
-  width:28px;height:28px;border-radius:50%;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  font-weight:700;
+  font-size:1.12rem;
+  letter-spacing:.2px;
+}
+.brand-mark{
+  width:26px;height:26px;border-radius:50%;
   background:var(--red);
   box-shadow:0 0 0 3px rgba(255,255,255,.22);
   flex:none;
   animation:pulse 3s ease-in-out infinite;
 }
 @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(255,255,255,.22)}50%{box-shadow:0 0 0 7px rgba(255,255,255,.08)}}
-.nav-links{display:flex;gap:6px;align-items:center}
-.nav-links a{
-  padding:7px 14px;border-radius:999px;font-size:.95rem;font-weight:500;
-  transition:.25s;white-space:nowrap;
+
+.header-stats{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  font-size:.85rem;
+  opacity:.95;
 }
-.nav-links a:hover{background:rgba(255,255,255,.15)}
-.top-progress{
-  height:3px;background:rgba(255,255,255,.18);position:relative;overflow:hidden;
+.header-stats b{font-size:1.05rem;font-weight:700;color:#ffd166}
+.top-bar{
+  height:3px;
+  background:rgba(255,255,255,.15);
+  overflow:hidden;
 }
-.top-progress span{
-  position:absolute;left:0;top:0;bottom:0;width:0%;
+.top-bar span{
+  display:block;
+  height:100%;
+  width:0;
   background:linear-gradient(90deg,#ffd166,var(--red));
   transition:width .7s cubic-bezier(.22,1,.36,1);
 }
 
-/* ============ হিরো ============ */
-.hero{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,#00694d 0%,#00432f 55%,#002e20 100%);
-  color:#fff;text-align:center;
-  padding:78px 20px 110px;
+/* ================= মেইন ================= */
+.main{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  overflow:hidden;
+  position:relative;
 }
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background:
-    radial-gradient(circle at 12% 22%,rgba(244,42,65,.22),transparent 42%),
-    radial-gradient(circle at 88% 78%,rgba(11,138,103,.35),transparent 45%),
-    repeating-linear-gradient(45deg,rgba(255,255,255,.022) 0 12px,transparent 12px 24px);
+
+/* ================= ম্যাপ ================= */
+.map-wrap{
+  position:relative;
+  background:#dfe8e3;
+  overflow:hidden;
+}
+#map{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+.map-overlay{
+  position:absolute;
+  z-index:500;
   pointer-events:none;
 }
-.hero-inner{position:relative;z-index:2;max-width:860px;margin:0 auto}
-.hero .flag{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--red);margin:0 auto 22px;
-  box-shadow:0 0 0 8px rgba(255,255,255,.10),0 12px 40px rgba(244,42,65,.45);
+.map-overlay.top{
+  top:16px;left:16px;right:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;
 }
-.hero h1{
-  font-size:clamp(2rem,5.4vw,3.5rem);
-  font-weight:700;line-height:1.28;margin-bottom:16px;
-  text-shadow:0 3px 24px rgba(0,0,0,.3);
+.map-overlay.bottom{
+  bottom:16px;left:16px;
+  pointer-events:none;
 }
-.hero h1 em{color:#ffd166;font-style:normal}
-.hero p{
-  font-size:clamp(1rem,2.2vw,1.16rem);
-  opacity:.92;max-width:640px;margin:0 auto 32px;font-weight:300;
+.map-search{
+  pointer-events:auto;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  max-width:340px;
+  flex:1;
+  min-width:200px;
 }
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn{
-  padding:13px 30px;border-radius:999px;font-weight:600;font-size:1rem;
-  transition:.28s;display:inline-flex;align-items:center;gap:8px;
+.map-search svg{opacity:.5;flex:none}
+.map-search input{
+  border:none;
+  outline:none;
+  padding:12px 10px;
+  font-size:.95rem;
+  width:100%;
+  background:transparent;
+  color:var(--ink);
 }
-.btn-primary{background:var(--red);color:#fff;box-shadow:0 8px 26px rgba(244,42,65,.42)}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(244,42,65,.55)}
-.btn-ghost{border:1.6px solid rgba(255,255,255,.55);color:#fff}
-.btn-ghost:hover{background:#fff;color:var(--green);border-color:#fff;transform:translateY(-3px)}
+.legend{
+  pointer-events:auto;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:8px 14px;
+  display:flex;
+  gap:14px;
+  font-size:.82rem;
+  color:var(--muted);
+  font-weight:500;
+}
+.legend i{
+  width:11px;height:11px;border-radius:50%;
+  display:inline-block;margin-right:6px;vertical-align:middle;
+}
+.dot-v{background:var(--green);box-shadow:0 0 0 3px rgba(0,106,78,.2)}
+.dot-u{background:#b9c3bd}
 
-/* ============ সেকশন ============ */
-section{padding:70px 0}
-.sec-head{text-align:center;margin-bottom:44px}
-.sec-head h2{
-  font-size:clamp(1.6rem,3.6vw,2.3rem);font-weight:700;color:var(--green-dark);
-  margin-bottom:10px;position:relative;display:inline-block;
+.map-hint{
+  pointer-events:auto;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(8px);
+  border-radius:999px;
+  box-shadow:var(--shadow);
+  padding:7px 16px;
+  font-size:.82rem;
+  color:var(--muted);
+  font-weight:500;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
 }
-.sec-head h2::after{
-  content:"";display:block;width:64px;height:4px;border-radius:4px;
-  background:var(--red);margin:12px auto 0;
-}
-.sec-head p{color:var(--muted);max-width:620px;margin:0 auto;font-size:1.02rem}
 
-/* ============ প্রোগ্রেস সেকশন ============ */
-.progress-section{background:linear-gradient(180deg,#ffffff,#f1f6f3);border-bottom:1px solid var(--line)}
-.progress-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:28px;align-items:stretch}
-.map-card{
-  background:var(--card);border-radius:20px;overflow:hidden;
-  box-shadow:var(--shadow);border:1px solid var(--line);
-  display:flex;flex-direction:column;
+/* Leaflet কাস্টমাইজ */
+.leaflet-container{
+  font-family:'Hind Siliguri',sans-serif;
+  background:#dfe8e3;
 }
-.map-card-head{
-  padding:16px 20px;display:flex;justify-content:space-between;align-items:center;
-  border-bottom:1px solid var(--line);gap:12px;flex-wrap:wrap;
+.leaflet-tooltip.district-tip{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:600;
+  font-size:.82rem;
+  background:var(--green-dark);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:4px 10px;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);
 }
-.map-card-head h3{font-size:1.08rem;font-weight:600;color:var(--green-dark)}
-.legend{display:flex;gap:16px;font-size:.85rem;color:var(--muted)}
-.legend i{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
-.dot-visited{background:var(--green);box-shadow:0 0 0 3px rgba(0,106,78,.18)}
-.dot-unvisited{background:#b9c3bd}
-#map{height:460px;width:100%;background:#dfe8e3;flex:1}
+.leaflet-tooltip.district-tip::before{border-top-color:var(--green-dark)}
+.leaflet-tooltip.district-tip.visited{background:var(--red)}
+.leaflet-tooltip.district-tip.visited::before{border-top-color:var(--red)}
+.leaflet-control-zoom{
+  border:none !important;
+  box-shadow:var(--shadow) !important;
+  border-radius:12px !important;
+  overflow:hidden;
+}
+.leaflet-control-zoom a{
+  background:#fff !important;
+  color:var(--green-dark) !important;
+  border-color:var(--line) !important;
+  font-weight:700 !important;
+  width:36px !important;
+  height:36px !important;
+  line-height:36px !important;
+  font-size:1.2rem !important;
+}
+.leaflet-control-zoom a:hover{background:#f0f6f2 !important;color:var(--green) !important}
+.leaflet-control-attribution{
+  background:rgba(255,255,255,.85) !important;
+  font-size:.7rem !important;
+  border-radius:8px 0 0 0;
+}
 
-.stats-col{display:flex;flex-direction:column;gap:22px}
-.stat-card{
-  background:var(--card);border-radius:20px;padding:26px 22px;text-align:center;
-  box-shadow:var(--shadow);border:1px solid var(--line);
+/* ================= সাইড প্যানেল ================= */
+.panel{
+  background:var(--cream);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border-left:1px solid var(--line);
+  position:relative;
+}
+.panel-head{
+  background:#fff;
+  padding:20px 22px 18px;
+  border-bottom:1px solid var(--line);
+  flex:none;
+}
+.panel-head-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.panel-title{
+  font-size:1.05rem;
+  font-weight:700;
+  color:var(--green-dark);
+}
+.panel-sub{
+  font-size:.82rem;
+  color:var(--muted);
+  font-weight:500;
+}
+.reset-mini{
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--red);
+  padding:6px 12px;
+  border-radius:999px;
+  background:#fdecee;
+  transition:.22s;
+  white-space:nowrap;
+}
+.reset-mini:hover{background:var(--red);color:#fff}
+
+.progress-block{
+  display:flex;
+  align-items:center;
+  gap:18px;
 }
 .ring{
   --p:0;
-  width:172px;height:172px;border-radius:50%;margin:0 auto 18px;
+  width:88px;height:88px;
+  border-radius:50%;
   background:conic-gradient(var(--red) calc(var(--p)*1%),#e4e9e5 0);
-  display:grid;place-items:center;position:relative;
+  display:grid;place-items:center;
+  position:relative;
+  flex:none;
   transition:background .8s cubic-bezier(.22,1,.36,1);
 }
 .ring::after{
-  content:"";position:absolute;inset:9px;border-radius:50%;
-  background:var(--card);
-  box-shadow:inset 0 2px 12px rgba(0,60,44,.07);
+  content:"";position:absolute;inset:7px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:inset 0 2px 10px rgba(0,60,44,.06);
 }
-.ring-inner{position:relative;z-index:2;line-height:1.25}
-.ring-inner b{font-size:2.4rem;font-weight:700;color:var(--green-dark);display:block}
-.ring-inner small{font-size:.82rem;color:var(--muted)}
-.stat-row{display:flex;justify-content:center;gap:26px;margin-top:6px}
-.stat-row div{text-align:center}
-.stat-row b{display:block;font-size:1.5rem;color:var(--green);font-weight:700}
-.stat-row span{font-size:.85rem;color:var(--muted)}
+.ring-inner{position:relative;z-index:2;text-align:center;line-height:1.1}
+.ring-inner b{font-size:1.5rem;font-weight:700;color:var(--green-dark);display:block}
+.ring-inner small{font-size:.66rem;color:var(--muted);font-weight:500}
 
-.div-card{
-  background:var(--card);border-radius:20px;padding:22px;
-  box-shadow:var(--shadow);border:1px solid var(--line);
+.progress-info{flex:1;min-width:0}
+.progress-info-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:3px;
 }
-.div-card h3{font-size:1rem;color:var(--green-dark);margin-bottom:16px;font-weight:600}
-.div-item{margin-bottom:13px}
-.div-item:last-child{margin-bottom:0}
-.div-item-top{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:5px;color:var(--muted)}
-.div-item-top b{color:var(--ink);font-weight:600}
-.bar{height:7px;border-radius:99px;background:#e8ece9;overflow:hidden}
-.bar span{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--green-light),var(--green));transition:width .8s cubic-bezier(.22,1,.36,1)}
+.progress-info-row:last-child{margin-bottom:0;margin-top:10px}
+.progress-info-row span{font-size:.82rem;color:var(--muted);font-weight:500}
+.progress-info-row b{font-size:1.05rem;color:var(--green-dark);font-weight:700}
+.progress-info-row b.red{color:var(--red)}
 
-.reset-btn{
-  width:100%;margin-top:6px;padding:11px;border-radius:12px;
-  background:#fdecee;color:var(--red);font-weight:600;font-size:.92rem;
-  transition:.25s;border:1px solid #f8d3d8;
+/* ================= ফিল্টার ট্যাব ================= */
+.tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:12px 22px;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  scrollbar-width:none;
+  flex:none;
 }
-.reset-btn:hover{background:var(--red);color:#fff}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:.84rem;
+  font-weight:500;
+  color:var(--muted);
+  background:#eef2ef;
+  transition:.22s;
+  white-space:nowrap;
+  flex:none;
+  border:1.4px solid transparent;
+}
+.tab:hover{background:#e2ebe6;color:var(--green)}
+.tab.active{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(0,106,78,.3)}
 
-/* ============ ফিল্টার ============ */
-.controls{
-  display:flex;flex-direction:column;gap:16px;margin-bottom:32px;
-  background:var(--card);padding:20px;border-radius:18px;
-  box-shadow:var(--shadow);border:1px solid var(--line);
+/* ================= জেলা লিস্ট ================= */
+.list{
+  flex:1;
+  overflow-y:auto;
+  padding:14px 14px 24px;
 }
-.search-box{position:relative}
-.search-box input{
-  width:100%;padding:13px 18px 13px 46px;border-radius:12px;
-  border:1.6px solid var(--line);font-family:inherit;font-size:1rem;
-  background:#fbfcfb;transition:.25s;color:var(--ink);
-}
-.search-box input:focus{outline:none;border-color:var(--green);background:#fff;box-shadow:0 0 0 4px rgba(0,106,78,.09)}
-.search-box svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);opacity:.45}
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{
-  padding:7px 16px;border-radius:999px;font-size:.9rem;font-weight:500;
-  background:#eef2ef;color:var(--muted);transition:.22s;border:1.4px solid transparent;
-}
-.chip:hover{background:#e2ebe6;color:var(--green)}
-.chip.active{background:var(--green);color:#fff;box-shadow:0 5px 16px rgba(0,106,78,.3)}
+.list::-webkit-scrollbar{width:8px}
+.list::-webkit-scrollbar-track{background:transparent}
+.list::-webkit-scrollbar-thumb{background:#cdd9d2;border-radius:99px}
+.list::-webkit-scrollbar-thumb:hover{background:#a8b8ae}
 
-/* ============ জেলা কার্ড ============ */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:18px}
-.card{
-  background:var(--card);border-radius:16px;padding:20px;
-  border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,60,44,.05);
-  cursor:pointer;transition:.28s;position:relative;overflow:hidden;
+.district-item{
+  background:#fff;
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:9px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  cursor:pointer;
+  transition:.22s;
+  border:1.5px solid transparent;
+  box-shadow:0 1px 4px rgba(0,60,44,.04);
 }
-.card::before{
-  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:var(--green);transform:scaleY(0);transform-origin:top;transition:.3s;
+.district-item:hover{
+  transform:translateX(3px);
+  box-shadow:var(--shadow-sm);
+  border-color:#cfe0d8;
 }
-.card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:#cfe0d8}
-.card:hover::before{transform:scaleY(1)}
-.card.visited{background:linear-gradient(160deg,#f2fbf7,#ffffff);border-color:#bfe3d5}
-.card.visited::before{background:var(--red);transform:scaleY(1)}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
-.card h3{font-size:1.16rem;font-weight:600;color:var(--green-dark)}
-.tick{
-  width:26px;height:26px;border-radius:50%;flex:none;
-  display:grid;place-items:center;background:#eef2ef;color:#9aa8a1;
-  font-size:.82rem;transition:.25s;
+.district-item.visited{
+  background:linear-gradient(135deg,#f0faf5,#ffffff);
+  border-color:#bfe3d5;
 }
-.card.visited .tick{background:var(--green);color:#fff;box-shadow:0 4px 12px rgba(0,106,78,.35)}
-.badge{
-  display:inline-block;font-size:.76rem;padding:3px 11px;border-radius:999px;
-  background:#eef4f1;color:var(--green);font-weight:500;margin-bottom:10px;
+.di-tick{
+  width:36px;height:36px;
+  border-radius:11px;
+  background:#eef2ef;
+  color:#9aa8a1;
+  display:grid;
+  place-items:center;
+  font-size:.95rem;
+  font-weight:700;
+  flex:none;
+  transition:.25s;
 }
-.card p{font-size:.9rem;color:var(--muted);line-height:1.65}
-.card .count{margin-top:11px;font-size:.83rem;color:var(--green);font-weight:600}
-.no-result{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+.district-item.visited .di-tick{
+  background:var(--green);
+  color:#fff;
+  box-shadow:0 4px 12px rgba(0,106,78,.35);
+}
+.di-body{flex:1;min-width:0}
+.di-name{
+  font-size:1rem;
+  font-weight:600;
+  color:var(--green-dark);
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:2px;
+}
+.di-div{
+  font-size:.72rem;
+  font-weight:500;
+  color:var(--green);
+  background:#eef4f1;
+  padding:1px 8px;
+  border-radius:999px;
+  flex:none;
+}
+.di-spot{
+  font-size:.82rem;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.di-arrow{
+  color:#c4d0c9;
+  font-size:1.1rem;
+  flex:none;
+  transition:.22s;
+}
+.district-item:hover .di-arrow{
+  color:var(--green);
+  transform:translateX(2px);
+}
 
-/* ============ মডাল ============ */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(8,30,23,.62);
-  backdrop-filter:blur(5px);z-index:2000;
-  display:flex;align-items:center;justify-content:center;padding:18px;
-  opacity:0;visibility:hidden;transition:.3s;
+.empty-state{
+  text-align:center;
+  padding:50px 20px;
+  color:var(--muted);
 }
-.modal-overlay.open{opacity:1;visibility:visible}
+.empty-state svg{opacity:.35;margin-bottom:12px}
+.empty-state p{font-size:.92rem}
+
+/* ================= মোডাল (ডিটেইল) ================= */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(8,30,23,.55);
+  backdrop-filter:blur(6px);
+  z-index:2000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+}
+.overlay.open{opacity:1;visibility:visible}
+
 .modal{
-  background:var(--card);border-radius:22px;width:100%;max-width:600px;
-  max-height:88vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);
-  transform:translateY(28px) scale(.97);transition:.35s cubic-bezier(.22,1,.36,1);
+  background:#fff;
+  border-radius:22px;
+  width:100%;
+  max-width:560px;
+  max-height:88vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+  transform:translateY(28px) scale(.97);
+  transition:.35s cubic-bezier(.22,1,.36,1);
 }
-.modal-overlay.open .modal{transform:translateY(0) scale(1)}
+.overlay.open .modal{transform:translateY(0) scale(1)}
+
 .modal-head{
   background:linear-gradient(135deg,var(--green),var(--green-dark));
-  color:#fff;padding:26px 26px 22px;position:relative;
-  border-radius:22px 22px 0 0;
+  color:#fff;
+  padding:24px 26px 20px;
+  position:relative;
+  flex:none;
 }
-.modal-head h2{font-size:1.55rem;font-weight:700;margin-bottom:4px}
-.modal-head span{opacity:.85;font-size:.92rem}
+.modal-head h2{
+  font-size:1.5rem;
+  font-weight:700;
+  margin-bottom:3px;
+}
+.modal-head span{opacity:.85;font-size:.88rem}
 .close-btn{
-  position:absolute;right:16px;top:16px;width:36px;height:36px;
-  border-radius:50%;background:rgba(255,255,255,.16);color:#fff;
-  display:grid;place-items:center;font-size:1.3rem;transition:.25s;line-height:1;
+  position:absolute;
+  right:16px;top:16px;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:rgba(255,255,255,.16);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:1.25rem;
+  transition:.25s;
+  line-height:1;
 }
 .close-btn:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
-.modal-body{padding:24px 26px 28px}
+
+.modal-body{
+  padding:20px 26px 24px;
+  overflow-y:auto;
+  flex:1;
+}
+.modal-body::-webkit-scrollbar{width:6px}
+.modal-body::-webkit-scrollbar-thumb{background:#cdd9d2;border-radius:99px}
+
 .spot{
-  display:flex;gap:14px;padding:14px 0;border-bottom:1px dashed var(--line);
+  display:flex;
+  gap:13px;
+  padding:13px 0;
+  border-bottom:1px dashed var(--line);
 }
-.spot:last-of-type{border-bottom:none}
+.spot:last-child{border-bottom:none}
 .spot-num{
-  width:30px;height:30px;border-radius:9px;flex:none;
-  background:#eef4f1;color:var(--green);font-weight:700;font-size:.88rem;
-  display:grid;place-items:center;
+  width:28px;height:28px;
+  border-radius:9px;
+  flex:none;
+  background:#eef4f1;
+  color:var(--green);
+  font-weight:700;
+  font-size:.85rem;
+  display:grid;
+  place-items:center;
 }
-.spot h4{font-size:1.03rem;font-weight:600;color:var(--green-dark);margin-bottom:3px}
-.spot p{font-size:.9rem;color:var(--muted);line-height:1.6}
+.spot h4{
+  font-size:1rem;
+  font-weight:600;
+  color:var(--green-dark);
+  margin-bottom:3px;
+}
+.spot p{font-size:.88rem;color:var(--muted);line-height:1.6}
+
 .visit-btn{
-  width:100%;margin-top:22px;padding:14px;border-radius:13px;
-  font-weight:600;font-size:1.02rem;transition:.28s;
-  background:var(--green);color:#fff;box-shadow:0 8px 24px rgba(0,106,78,.3);
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border-radius:13px;
+  font-weight:600;
+  font-size:1rem;
+  transition:.28s;
+  background:var(--green);
+  color:#fff;
+  box-shadow:0 8px 24px rgba(0,106,78,.3);
+  flex:none;
 }
 .visit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,106,78,.4)}
-.visit-btn.active{background:var(--red);box-shadow:0 8px 24px rgba(244,42,65,.32)}
-
-/* ============ ফুটার ============ */
-footer{
-  background:linear-gradient(135deg,#00432f,#00291d);
-  color:#cfe3da;padding:52px 20px 30px;text-align:center;margin-top:20px;
-}
-footer .f-logo{
-  width:44px;height:44px;border-radius:50%;background:var(--red);
-  margin:0 auto 16px;box-shadow:0 0 0 6px rgba(255,255,255,.07);
-}
-footer h3{color:#fff;font-size:1.25rem;margin-bottom:8px;font-weight:600}
-footer p{font-size:.93rem;opacity:.75;max-width:520px;margin:0 auto 22px}
-footer .heart{color:var(--red)}
-footer .f-bottom{
-  border-top:1px solid rgba(255,255,255,.1);margin-top:26px;padding-top:20px;
-  font-size:.85rem;opacity:.6;
+.visit-btn.active{
+  background:var(--red);
+  box-shadow:0 8px 24px rgba(244,42,65,.32);
 }
 
-/* ============ টপ বাটন ============ */
-.to-top{
-  position:fixed;right:22px;bottom:22px;width:48px;height:48px;border-radius:50%;
-  background:var(--green);color:#fff;display:grid;place-items:center;
-  box-shadow:0 10px 30px rgba(0,106,78,.4);z-index:900;
-  opacity:0;visibility:hidden;transition:.3s;font-size:1.2rem;
+/* ================= টোস্ট ================= */
+.toast{
+  position:fixed;
+  bottom:26px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--green-dark);
+  color:#fff;
+  padding:12px 24px;
+  border-radius:999px;
+  font-size:.9rem;
+  font-weight:500;
+  box-shadow:0 12px 32px rgba(0,0,0,.3);
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+  z-index:3000;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
-.to-top.show{opacity:1;visibility:visible}
-.to-top:hover{background:var(--red);transform:translateY(-4px)}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.toast.red{background:var(--red)}
 
-/* ============ রেসপন্সিভ ============ */
-@media(max-width:920px){
-  .progress-grid{grid-template-columns:1fr}
-  #map{height:380px}
+/* ================= মোবাইল ================= */
+.mobile-toggle{display:none}
+
+@media(max-width:900px){
+  .main{grid-template-columns:1fr;grid-template-rows:1fr auto}
+  .panel{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    top:auto;
+    height:60%;
+    border-left:none;
+    border-top:1px solid var(--line);
+    border-radius:22px 22px 0 0;
+    box-shadow:0 -12px 40px rgba(0,0,0,.15);
+    transform:translateY(calc(100% - 72px));
+    transition:transform .38s cubic-bezier(.22,1,.36,1);
+    z-index:800;
+    max-height:78vh;
+  }
+  .panel.open{transform:translateY(0)}
+  .panel-handle{
+    display:block;
+    width:44px;height:5px;
+    background:#cdd9d2;
+    border-radius:99px;
+    margin:10px auto 0;
+    flex:none;
+  }
+  .panel-head{padding-top:8px}
+  .header-stats{font-size:.78rem;gap:14px}
+  .header-stats b{font-size:.95rem}
+  .map-search{max-width:none}
+  .legend{font-size:.76rem;padding:6px 11px;gap:10px}
+  .map-hint{font-size:.76rem;padding:6px 12px}
+  .brand span.brand-text{font-size:1rem}
+  .ring{width:74px;height:74px}
+  .ring-inner b{font-size:1.25rem}
 }
-@media(max-width:640px){
-  .nav-links{display:none}
-  section{padding:48px 0}
-  .hero{padding:56px 18px 76px}
-  .grid{grid-template-columns:1fr;gap:14px}
-  .modal-body,.modal-head{padding-left:20px;padding-right:20px}
-  #map{height:320px}
-  .ring{width:150px;height:150px}
-  .ring-inner b{font-size:2rem}
+@media(max-width:520px){
+  .nav{padding:9px 14px}
+  .brand{font-size:1rem}
+  .brand-mark{width:22px;height:22px}
+  .header-stats{gap:10px}
+  .map-overlay.top{top:10px;left:10px;right:10px}
+  .map-overlay.bottom{bottom:10px;left:10px}
+  .list{padding:12px 12px 20px}
+  .district-item{padding:12px 14px;gap:11px}
+  .di-tick{width:32px;height:32px;font-size:.85rem}
+  .di-name{font-size:.94rem}
+  .modal-head h2{font-size:1.3rem}
+  .modal-body{padding:16px 20px 20px}
+  .panel-head{padding:8px 16px 14px}
+  .tabs{padding:10px 16px}
+}
+@media(min-width:901px){
+  .panel-handle{display:none}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= হেডার ================= -->
-<header>
-  <nav class="nav">
-    <div class="logo">
-      <span class="logo-mark"></span>
-      <span>আমার বাংলাদেশ</span>
-    </div>
-    <div class="nav-links">
-      <a href="#home">হোম</a>
-      <a href="#progress">আমার অগ্রগতি</a>
-      <a href="#districts">জেলা সমূহ</a>
-    </div>
-  </nav>
-  <div class="top-progress"><span id="topBar"></span></div>
-</header>
+<div class="app">
 
-<!-- ================= হিরো ================= -->
-<section class="hero" id="home">
-  <div class="hero-inner">
-    <div class="flag"></div>
-    <h1>পৃথিবীর সবচেয়ে সুন্দর দেশ <em>বাংলাদেশ</em></h1>
-    <p>
-      নদী, পাহাড়, সমুদ্র, হাওর আর সবুজের দেশ। ৬৪ জেলার দর্শনীয় স্থান এক জায়গায় —
-      ঘুরে ঘুরে দেখুন, আর ম্যাপে দেখুন আপনি কত শতাংশ বাংলাদেশ ঘুরে ফেলেছেন।
-    </p>
-    <div class="hero-btns">
-      <a href="#progress" class="btn btn-primary">🗺️ আমার অগ্রগতি দেখুন</a>
-      <a href="#districts" class="btn btn-ghost">📍 জেলা ঘুরে দেখুন</a>
-    </div>
-  </div>
-</section>
+  <!-- ========== হেডার ========== -->
+  <header>
+    <nav class="nav">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <span class="brand-text">আমার বাংলাদেশ</span>
+      </div>
+      <div class="header-stats">
+        <div><b id="hVisited">০</b> / ৬৪ জেলা</div>
+        <div><b id="hPct">০%</b> সম্পন্ন</div>
+      </div>
+    </nav>
+    <div class="top-bar"><span id="topBar"></span></div>
+  </header>
 
-<!-- ================= প্রোগ্রেস সেকশন ================= -->
-<section class="progress-section" id="progress">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>আমার ভ্রমণ অগ্রগতি</h2>
-      <p>যে জেলাগুলোতে আপনি ঘুরেছেন সেগুলোতে ক্লিক করে চিহ্নিত করুন — ম্যাপ ও শতাংশ নিজে থেকেই আপডেট হবে।</p>
-    </div>
+  <!-- ========== মেইন ========== -->
+  <div class="main">
 
-    <div class="progress-grid">
-      <!-- ম্যাপ -->
-      <div class="map-card">
-        <div class="map-card-head">
-          <h3>🗺️ বাংলাদেশ ম্যাপ</h3>
-          <div class="legend">
-            <span><i class="dot-visited"></i>ভ্রমণ করেছি</span>
-            <span><i class="dot-unvisited"></i>বাকি আছে</span>
-          </div>
+    <!-- ===== ম্যাপ ===== -->
+    <div class="map-wrap">
+      <div id="map"></div>
+
+      <div class="map-overlay top">
+        <div class="map-search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+          </svg>
+          <input type="text" id="mapSearch" placeholder="জেলা বা স্থান খুঁজুন...">
         </div>
-        <div id="map"></div>
+        <div class="legend">
+          <span><i class="dot-v"></i>ভ্রমণ করেছি</span>
+          <span><i class="dot-u"></i>বাকি আছে</span>
+        </div>
       </div>
 
-      <!-- স্ট্যাটস -->
-      <div class="stats-col">
-        <div class="stat-card">
+      <div class="map-overlay bottom">
+        <div class="map-hint">
+          <span>👆</span> ম্যাপে ক্লিক করে জেলা দেখুন
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== সাইড প্যানেল ===== -->
+    <aside class="panel" id="panel">
+      <div class="panel-handle" id="panelHandle"></div>
+
+      <div class="panel-head">
+        <div class="panel-head-top">
+          <div>
+            <div class="panel-title">আমার ভ্রমণ অগ্রগতি</div>
+            <div class="panel-sub">যে জেলাগুলোতে ঘুরেছেন চিহ্নিত করুন</div>
+          </div>
+          <button class="reset-mini" id="resetBtn">↺ রিসেট</button>
+        </div>
+
+        <div class="progress-block">
           <div class="ring" id="ring">
             <div class="ring-inner">
               <b id="ringPct">০%</b>
-              <small>বাংলাদেশ ভ্রমণ</small>
+              <small>সম্পন্ন</small>
             </div>
           </div>
-          <div class="stat-row">
-            <div>
-              <b id="visitedCount">০</b>
-              <span>জেলা ভ্রমণ</span>
+          <div class="progress-info">
+            <div class="progress-info-row">
+              <span>ভ্রমণ করেছি</span>
+              <b id="pVisited">০ জেলা</b>
             </div>
-            <div>
-              <b>৬৪</b>
-              <span>মোট জেলা</span>
-            </div>
-            <div>
-              <b id="remainCount">৬৪</b>
+            <div class="progress-info-row">
               <span>বাকি আছে</span>
+              <b class="red" id="pRemain">৬৪ জেলা</b>
             </div>
           </div>
-          <button class="reset-btn" id="resetBtn">↺ সব রিসেট করুন</button>
-        </div>
-
-        <div class="div-card">
-          <h3>📊 বিভাগভিত্তিক অগ্রগতি</h3>
-          <div id="divList"></div>
         </div>
       </div>
-    </div>
+
+      <div class="tabs" id="tabs"></div>
+
+      <div class="list" id="list"></div>
+    </aside>
+
   </div>
-</section>
+</div>
 
-<!-- ================= জেলা সেকশন ================= -->
-<section id="districts">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>৬৪ জেলার দর্শনীয় স্থান</h2>
-      <p>জেলা বা দর্শনীয় স্থানের নাম লিখে খুঁজুন, অথবা বিভাগ অনুযায়ী ফিল্টার করুন।</p>
-    </div>
-
-    <div class="controls">
-      <div class="search-box">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-          <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
-        </svg>
-        <input type="text" id="searchInput" placeholder="জেলা বা স্থানের নাম লিখুন... (যেমন: কক্সবাজার, সুন্দরবন)">
-      </div>
-      <div class="chips" id="divisionChips"></div>
-    </div>
-
-    <div class="grid" id="districtGrid"></div>
-  </div>
-</section>
-
-<!-- ================= ফুটার ================= -->
-<footer>
-  <div class="f-logo"></div>
-  <h3>আমার বাংলাদেশ</h3>
-  <p>৬৪ জেলার সৌন্দর্য এক জায়গায়। ঘুরুন, জানুন, ভালোবাসুন — ভালোবাসা দিয়ে তৈরি <span class="heart">♥</span></p>
-  <div class="f-bottom">© <span id="year"></span> আমার বাংলাদেশ | সর্বস্বত্ব সংরক্ষিত</div>
-</footer>
-
-<!-- ================= মডাল ================= -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modalBox">
+<!-- ========== মোডাল ========== -->
+<div class="overlay" id="overlay">
+  <div class="modal">
     <div class="modal-head">
       <h2 id="mTitle">জেলার নাম</h2>
-      <span id="mDivision">বিভাগ</span>
+      <span id="mSub">বিভাগ • স্থান সংখ্যা</span>
       <button class="close-btn" id="closeModal">×</button>
     </div>
     <div class="modal-body">
       <div id="mSpots"></div>
+    </div>
+    <div style="padding:0 26px 22px;flex:none;">
       <button class="visit-btn" id="mVisitBtn">✓ ভ্রমণ করেছি হিসেবে চিহ্নিত করুন</button>
     </div>
   </div>
 </div>
 
-<button class="to-top" id="toTop">↑</button>
+<!-- ========== টোস্ট ========== -->
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============================================================
@@ -487,7 +755,7 @@ footer .f-bottom{
    ============================================================ */
 const DISTRICTS = [
 
-/* ---------------- ঢাকা বিভাগ (১৩) ---------------- */
+/* ---- ঢাকা বিভাগ (১৩) ---- */
 {id:"dhaka",name:"ঢাকা",division:"ঢাকা",lat:23.8103,lng:90.4125,spots:[
  ["লালবাগ কেল্লা","১৭ শতকের মোঘল দুর্গ, ঢাকার সবচেয়ে পরিচিত ঐতিহাসিক নিদর্শন।"],
  ["আহসান মঞ্জিল","বুড়িগঙ্গা নদীর তীরে অবস্থিত ঐতিহাসিক জমিদার বাড়ি ও জাদুঘর।"],
@@ -555,7 +823,7 @@ const DISTRICTS = [
  ["ডামুড্যা ঘাট","পদ্মার তীরে শান্ত ও নির্জন পরিবেশ।"]
 ]},
 
-/* ---------------- চট্টগ্রাম বিভাগ (১১) ---------------- */
+/* ---- চট্টগ্রাম বিভাগ (১১) ---- */
 {id:"chattogram",name:"চট্টগ্রাম",division:"চট্টগ্রাম",lat:22.3569,lng:91.7832,spots:[
  ["পতেঙ্গা সমুদ্র সৈকত","শহরের কাছে সমুদ্রের ঢেউ উপভোগের সেরা জায়গা।"],
  ["ফয়েজ লেক","শহরের মাঝে সবুজে ঘেরা সুন্দর হ্রদ।"],
@@ -614,7 +882,7 @@ const DISTRICTS = [
  ["চাঁদপুর ইলিশ ঘাট","সকালে তাজা ইলিশ কেনার অভিজ্ঞতা।"]
 ]},
 
-/* ---------------- রাজশাহী বিভাগ (৮) ---------------- */
+/* ---- রাজশাহী বিভাগ (৮) ---- */
 {id:"rajshahi",name:"রাজশাহী",division:"রাজশাহী",lat:24.3745,lng:88.6042,spots:[
  ["পদ্মা গার্ডেন","পদ্মা নদীর তীরে সুন্দর পার্ক ও বিনোদন কেন্দ্র।"],
  ["পুঠিয়া রাজবাড়ী","বিশাল জমিদার প্রাসাদ ও মন্দির সমারোহ।"],
@@ -657,7 +925,7 @@ const DISTRICTS = [
  ["আক্কেলপুর","সবুজে ঘেরা শান্ত গ্রামীণ পরিবেশ।"]
 ]},
 
-/* ---------------- খুলনা বিভাগ (১০) ---------------- */
+/* ---- খুলনা বিভাগ (১০) ---- */
 {id:"khulna",name:"খুলনা",division:"খুলনা",lat:22.8456,lng:89.5403,spots:[
  ["সুন্দরবন","বিশ্বের বৃহত্তম ম্যানগ্রোভ বন ও রয়েল বেঙ্গল টাইগারের আবাস।"],
  ["রূপসা সেতু","নদীর উপর সুন্দর সেতু ও সন্ধ্যার দৃশ্য।"],
@@ -709,7 +977,7 @@ const DISTRICTS = [
  ["ভৈরব নদী","নদীর তীরে মনোরম পরিবেশ।"]
 ]},
 
-/* ---------------- বরিশাল বিভাগ (৬) ---------------- */
+/* ---- বরিশাল বিভাগ (৬) ---- */
 {id:"barishal",name:"বরিশাল",division:"বরিশাল",lat:22.7010,lng:90.3535,spots:[
  ["গুঠিয়া মসজিদ","বরিশালের বিখ্যাত প্রাচীন মসজিদ।"],
  ["বেলুয়া লেক","শহরের মাঝে সুন্দর হ্রদ ও পার্ক।"],
@@ -742,7 +1010,7 @@ const DISTRICTS = [
  ["কাঁঠালিয়া","সবুজে ঘেরা গ্রামীণ এলাকা।"]
 ]},
 
-/* ---------------- সিলেট বিভাগ (৪) ---------------- */
+/* ---- সিলেট বিভাগ (৪) ---- */
 {id:"sylhet",name:"সিলেট",division:"সিলেট",lat:24.8949,lng:91.8687,spots:[
  ["রাতারগুল সোয়াম্প ফরেস্ট","দেশের একমাত্র মিঠাপানির জলাবন।"],
  ["জাফলং","পাহাড়-নদী-পাথরের অপূর্ব মিলনস্থল।"],
@@ -765,7 +1033,7 @@ const DISTRICTS = [
  ["নীলাদ্রি লেক","টিলার উপর নির্মিত সুন্দর লেক রিসোর্ট।"]
 ]},
 
-/* ---------------- রংপুর বিভাগ (৮) ---------------- */
+/* ---- রংপুর বিভাগ (৮) ---- */
 {id:"rangpur",name:"রংপুর",division:"রংপুর",lat:25.7439,lng:89.2752,spots:[
  ["তাজহাট রাজবাড়ি","সুন্দর স্থাপত্যের ঐতিহাসিক রাজবাড়ি।"],
  ["রংপুর চিড়িয়াখানা","উত্তরবঙ্গের বিনোদন কেন্দ্র।"],
@@ -807,7 +1075,7 @@ const DISTRICTS = [
  ["বালিয়াডাঙ্গী","গ্রামীণ সৌন্দর্যে ঘেরা এলাকা।"]
 ]},
 
-/* ---------------- ময়মনসিংহ বিভাগ (৪) ---------------- */
+/* ---- ময়মনসিংহ বিভাগ (৪) ---- */
 {id:"mymensingh",name:"ময়মনসিংহ",division:"ময়মনসিংহ",lat:24.7471,lng:90.4203,spots:[
  ["শশী লজ","ব্রহ্মপুত্র নদীর তীরে ঐতিহাসিক প্রাসাদ ও জাদুঘর।"],
  ["ব্রহ্মপুত্র নদ","নদীর তীরে হাঁটা ও নৌকাভ্রমণ।"],
@@ -834,179 +1102,184 @@ const DISTRICTS = [
 /* ============================================================
    ২) হেল্পার
    ============================================================ */
-const BN_DIGITS = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
-function bn(n){ return String(n).replace(/\d/g, d => BN_DIGITS[+d]); }
+const BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+const bn = n => String(n).replace(/\d/g, d => BN[+d]);
 
 const DIVISIONS = ["ঢাকা","চট্টগ্রাম","রাজশাহী","খুলনা","বরিশাল","সিলেট","রংপুর","ময়মনসিংহ"];
-const STORAGE_KEY = "bd_tourist_visited_v1";
+const STORAGE_KEY = "bd_tourist_visited_v2";
 
 let visited = new Set();
 try {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) visited = new Set(JSON.parse(raw));
-} catch(e){ console.warn("localStorage unavailable"); }
-
-function save(){
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...visited])); } catch(e){}
-}
+} catch(e){}
+const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...visited])); } catch(e){} };
 
 /* ============================================================
    ৩) ম্যাপ
    ============================================================ */
-let map, markerLayer = {}, activeDistrict = null;
+let map, markers = {}, activeId = null;
 
 function initMap(){
-  map = L.map('map', { scrollWheelZoom:false, zoomControl:true })
-         .setView([23.7, 90.35], 7);
+  map = L.map('map', {
+    zoomControl:true,
+    scrollWheelZoom:true,
+    attributionControl:true
+  }).setView([23.7, 90.35], 7);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // পরিষ্কার, লাইট টাইল
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     maxZoom: 18,
-    attribution: '&copy; OpenStreetMap'
+    subdomains: 'abcd',
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
   }).addTo(map);
 
   DISTRICTS.forEach(d => {
-    const cm = L.circleMarker([d.lat, d.lng], {
-      radius: 8,
+    const m = L.circleMarker([d.lat, d.lng], {
+      radius: 9,
       color: "#ffffff",
-      weight: 2,
+      weight: 2.5,
       fillColor: "#b9c3bd",
-      fillOpacity: 1
+      fillOpacity: 1,
+      className: "district-marker"
     }).addTo(map);
 
-    cm.bindTooltip(d.name, { direction:"top", offset:[0,-6], className:"district-tip" });
+    m.bindTooltip(d.name, { direction:"top", offset:[0,-8], className:"district-tip" });
 
-    cm.on('click', () => openModal(d.id));
-    cm.on('mouseover', function(){ this.setRadius(11); });
-    cm.on('mouseout',  function(){ this.setRadius(8);  });
+    m.on('click', () => {
+      openModal(d.id);
+      flyToDistrict(d);
+    });
+    m.on('mouseover', function(){ this.setRadius(12); });
+    m.on('mouseout',  function(){ this.setRadius(visited.has(d.id) ? 10 : 9); });
 
-    markerLayer[d.id] = cm;
+    markers[d.id] = m;
   });
 
-  // পুরো বাংলাদেশ দেখানোর জন্য বাউন্ড
-  map.fitBounds([[20.5, 88.0], [26.7, 92.7]]);
+  map.fitBounds([[20.4, 87.9], [26.7, 92.8]]);
+  refreshMarkers();
 }
 
-function refreshMapColors(){
+function refreshMarkers(){
   DISTRICTS.forEach(d => {
-    const m = markerLayer[d.id];
+    const m = markers[d.id];
     if (!m) return;
-    if (visited.has(d.id)) {
-      m.setStyle({ fillColor:"#006A4E", color:"#ffffff", weight:2.5 });
-      m.bindTooltip(d.name + " ✓", { direction:"top", offset:[0,-6] });
+    if (visited.has(d.id)){
+      m.setStyle({ fillColor:"#006A4E", color:"#fff", weight:3 });
+      m.setRadius(10);
+      m.bindTooltip(d.name + " ✓", { direction:"top", offset:[0,-8], className:"district-tip visited" });
     } else {
-      m.setStyle({ fillColor:"#b9c3bd", color:"#ffffff", weight:2 });
-      m.bindTooltip(d.name, { direction:"top", offset:[0,-6] });
+      m.setStyle({ fillColor:"#b9c3bd", color:"#fff", weight:2.5 });
+      m.setRadius(9);
+      m.bindTooltip(d.name, { direction:"top", offset:[0,-8], className:"district-tip" });
     }
   });
 }
 
-/* ============================================================
-   ৪) স্ট্যাটস আপডেট
-   ============================================================ */
-function updateStats(){
-  const total = DISTRICTS.length;             // ৬৪
-  const count = visited.size;
-  const pct   = Math.round((count / total) * 100);
-
-  document.getElementById("ringPct").textContent = bn(pct) + "%";
-  document.getElementById("ring").style.setProperty("--p", pct);
-  document.getElementById("visitedCount").textContent = bn(count);
-  document.getElementById("remainCount").textContent  = bn(total - count);
-  document.getElementById("topBar").style.width = pct + "%";
-
-  // বিভাগভিত্তিক
-  const list = document.getElementById("divList");
-  list.innerHTML = DIVISIONS.map(div => {
-    const items = DISTRICTS.filter(d => d.division === div);
-    const done  = items.filter(d => visited.has(d.id)).length;
-    const p     = Math.round((done / items.length) * 100);
-    return `
-      <div class="div-item">
-        <div class="div-item-top">
-          <b>${div}</b>
-          <span>${bn(done)}/${bn(items.length)} • ${bn(p)}%</span>
-        </div>
-        <div class="bar"><span style="width:${p}%"></span></div>
-      </div>`;
-  }).join("");
+function flyToDistrict(d){
+  map.flyTo([d.lat, d.lng], Math.max(map.getZoom(), 9), { duration:0.7 });
 }
 
 /* ============================================================
-   ৫) জেলা কার্ড রেন্ডার
+   ৪) স্ট্যাটস
    ============================================================ */
-let currentDivision = "সব";
-let currentSearch   = "";
+function updateStats(){
+  const total = DISTRICTS.length;
+  const count = visited.size;
+  const pct = Math.round((count/total)*100);
 
-function renderChips(){
-  const box = document.getElementById("divisionChips");
+  document.getElementById("ringPct").textContent = bn(pct) + "%";
+  document.getElementById("ring").style.setProperty("--p", pct);
+  document.getElementById("pVisited").textContent = bn(count) + " জেলা";
+  document.getElementById("pRemain").textContent = bn(total - count) + " জেলা";
+  document.getElementById("hVisited").textContent = bn(count);
+  document.getElementById("hPct").textContent = bn(pct) + "%";
+  document.getElementById("topBar").style.width = pct + "%";
+}
+
+/* ============================================================
+   ৫) ট্যাব ও লিস্ট
+   ============================================================ */
+let currentDiv = "সব";
+let currentQuery = "";
+
+function renderTabs(){
+  const el = document.getElementById("tabs");
   const all = ["সব", ...DIVISIONS];
-  box.innerHTML = all.map(d =>
-    `<button class="chip ${d === currentDivision ? "active" : ""}" data-div="${d}">${d}</button>`
+  el.innerHTML = all.map(d =>
+    `<button class="tab ${d===currentDiv?'active':''}" data-div="${d}">${d}</button>`
   ).join("");
 
-  box.querySelectorAll(".chip").forEach(btn => {
-    btn.addEventListener("click", () => {
-      currentDivision = btn.dataset.div;
-      renderChips();
-      renderGrid();
+  el.querySelectorAll(".tab").forEach(b => {
+    b.addEventListener("click", () => {
+      currentDiv = b.dataset.div;
+      renderTabs();
+      renderList();
     });
   });
 }
 
-function renderGrid(){
-  const grid = document.getElementById("districtGrid");
-  const q = currentSearch.trim().toLowerCase();
+function renderList(){
+  const list = document.getElementById("list");
+  const q = currentQuery.trim().toLowerCase();
 
-  const list = DISTRICTS.filter(d => {
-    const divOk = currentDivision === "সব" || d.division === currentDivision;
-    if (!divOk) return false;
+  const filtered = DISTRICTS.filter(d => {
+    if (currentDiv !== "সব" && d.division !== currentDiv) return false;
     if (!q) return true;
-    const inName = d.name.toLowerCase().includes(q);
-    const inDiv  = d.division.toLowerCase().includes(q);
-    const inSpot = d.spots.some(s => s[0].toLowerCase().includes(q) || s[1].toLowerCase().includes(q));
-    return inName || inDiv || inSpot;
+    return d.name.toLowerCase().includes(q)
+      || d.division.toLowerCase().includes(q)
+      || d.spots.some(s => s[0].toLowerCase().includes(q) || s[1].toLowerCase().includes(q));
   });
 
-  if (!list.length){
-    grid.innerHTML = `<div class="no-result">😔 কোনো ফলাফল পাওয়া যায়নি। অন্য কিছু লিখে দেখুন।</div>`;
+  if (!filtered.length){
+    list.innerHTML = `
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+        </svg>
+        <p>কোনো ফলাফল পাওয়া যায়নি</p>
+      </div>`;
     return;
   }
 
-  grid.innerHTML = list.map(d => {
+  list.innerHTML = filtered.map(d => {
     const isV = visited.has(d.id);
     return `
-      <article class="card ${isV ? "visited" : ""}" data-id="${d.id}">
-        <div class="card-top">
-          <h3>${d.name}</h3>
-          <span class="tick">${isV ? "✓" : "○"}</span>
+      <div class="district-item ${isV?'visited':''}" data-id="${d.id}">
+        <div class="di-tick">${isV?'✓':'○'}</div>
+        <div class="di-body">
+          <div class="di-name">${d.name} <span class="di-div">${d.division}</span></div>
+          <div class="di-spot">${d.spots[0][0]}${d.spots[1] ? ' • '+d.spots[1][0] : ''}</div>
         </div>
-        <span class="badge">${d.division} বিভাগ</span>
-        <p>${d.spots[0][0]}${d.spots[1] ? " , " + d.spots[1][0] : ""}${d.spots[2] ? " সহ আরও..." : ""}</p>
-        <div class="count">📍 ${bn(d.spots.length)}টি দর্শনীয় স্থান</div>
-      </article>`;
+        <div class="di-arrow">›</div>
+      </div>`;
   }).join("");
 
-  grid.querySelectorAll(".card").forEach(c => {
-    c.addEventListener("click", () => openModal(c.dataset.id));
+  list.querySelectorAll(".district-item").forEach(el => {
+    el.addEventListener("click", () => {
+      const d = DISTRICTS.find(x => x.id === el.dataset.id);
+      openModal(d.id);
+      flyToDistrict(d);
+    });
   });
 }
 
 /* ============================================================
-   ৬) মডাল
+   ৬) মোডাল
    ============================================================ */
-const overlay = document.getElementById("modalOverlay");
+const overlay = document.getElementById("overlay");
 
 function openModal(id){
   const d = DISTRICTS.find(x => x.id === id);
   if (!d) return;
-  activeDistrict = id;
+  activeId = id;
 
   document.getElementById("mTitle").textContent = d.name + " জেলা";
-  document.getElementById("mDivision").textContent = d.division + " বিভাগ • " + bn(d.spots.length) + "টি দর্শনীয় স্থান";
+  document.getElementById("mSub").textContent = d.division + " বিভাগ • " + bn(d.spots.length) + "টি দর্শনীয় স্থান";
 
-  document.getElementById("mSpots").innerHTML = d.spots.map((s, i) => `
+  document.getElementById("mSpots").innerHTML = d.spots.map((s,i) => `
     <div class="spot">
-      <div class="spot-num">${bn(i + 1)}</div>
+      <div class="spot-num">${bn(i+1)}</div>
       <div>
         <h4>${s[0]}</h4>
         <p>${s[1]}</p>
@@ -1014,15 +1287,14 @@ function openModal(id){
     </div>
   `).join("");
 
-  updateModalBtn();
+  updateVisitBtn();
   overlay.classList.add("open");
-  document.body.style.overflow = "hidden";
 }
 
-function updateModalBtn(){
+function updateVisitBtn(){
   const btn = document.getElementById("mVisitBtn");
-  if (visited.has(activeDistrict)){
-    btn.textContent = "✓ ভ্রমণ করেছি (মুছে ফেলতে ক্লিক করুন)";
+  if (visited.has(activeId)){
+    btn.textContent = "✓ ভ্রমণ করেছি (মুছতে ক্লিক করুন)";
     btn.classList.add("active");
   } else {
     btn.textContent = "○ ভ্রমণ করেছি হিসেবে চিহ্নিত করুন";
@@ -1032,8 +1304,7 @@ function updateModalBtn(){
 
 function closeModal(){
   overlay.classList.remove("open");
-  document.body.style.overflow = "";
-  activeDistrict = null;
+  activeId = null;
 }
 
 document.getElementById("closeModal").addEventListener("click", closeModal);
@@ -1041,71 +1312,73 @@ overlay.addEventListener("click", e => { if (e.target === overlay) closeModal();
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
 document.getElementById("mVisitBtn").addEventListener("click", () => {
-  if (!activeDistrict) return;
-  if (visited.has(activeDistrict)) visited.delete(activeDistrict);
-  else visited.add(activeDistrict);
+  if (!activeId) return;
+  const d = DISTRICTS.find(x => x.id === activeId);
+  const wasVisited = visited.has(activeId);
+
+  if (wasVisited) visited.delete(activeId);
+  else visited.add(activeId);
 
   save();
-  updateModalBtn();
+  updateVisitBtn();
   updateStats();
-  refreshMapColors();
-  renderGrid();
+  refreshMarkers();
+  renderList();
+
+  showToast(wasVisited ? `✗ ${d.name} তালিকা থেকে মুছে ফেলা হয়েছে` : `✓ ${d.name} ভ্রমণ তালিকায় যোগ হয়েছে`, wasVisited);
 });
 
 /* ============================================================
-   ৭) সার্চ ও রিসেট
+   ৭) সার্চ, রিসেট
    ============================================================ */
-document.getElementById("searchInput").addEventListener("input", e => {
-  currentSearch = e.target.value;
-  renderGrid();
+document.getElementById("mapSearch").addEventListener("input", e => {
+  currentQuery = e.target.value;
+  renderList();
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
-  if (visited.size === 0) return;
+  if (!visited.size) return;
   if (confirm("আপনি কি সত্যিই সব ভ্রমণের তথ্য মুছে ফেলতে চান?")){
     visited.clear();
     save();
     updateStats();
-    refreshMapColors();
-    renderGrid();
+    refreshMarkers();
+    renderList();
+    showToast("↺ সব তথ্য রিসেট করা হয়েছে", true);
   }
 });
 
 /* ============================================================
-   ৮) টপ বাটন
+   ৮) টোস্ট
    ============================================================ */
-const toTop = document.getElementById("toTop");
-window.addEventListener("scroll", () => {
-  toTop.classList.toggle("show", window.scrollY > 500);
-});
-toTop.addEventListener("click", () => window.scrollTo({ top:0, behavior:"smooth" }));
+let toastTimer;
+function showToast(msg, red=false){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.toggle("red", red);
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+}
 
 /* ============================================================
-   ৯) ইনিশিয়ালাইজ
+   ৯) মোবাইল প্যানেল
    ============================================================ */
-document.getElementById("year").textContent = bn(new Date().getFullYear());
+const panel = document.getElementById("panel");
+document.getElementById("panelHandle").addEventListener("click", () => {
+  panel.classList.toggle("open");
+});
 
+/* ============================================================
+   ১০) ইনিশিয়ালাইজ
+   ============================================================ */
 (function init(){
   initMap();
-  refreshMapColors();
   updateStats();
-  renderChips();
-  renderGrid();
+  renderTabs();
+  renderList();
 })();
 </script>
-
-<style>
-/* Leaflet টুলটিপ বাংলা ফন্ট */
-.leaflet-tooltip.district-tip{
-  font-family:'Hind Siliguri',sans-serif;
-  font-weight:600;font-size:.82rem;
-  background:#006A4E;color:#fff;border:none;
-  border-radius:8px;padding:3px 9px;
-  box-shadow:0 4px 14px rgba(0,0,0,.25);
-}
-.leaflet-tooltip.district-tip::before{ border-top-color:#006A4E; }
-.leaflet-container{ font-family:'Hind Siliguri',sans-serif; }
-</style>
 
 </body>
 </html>
