@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>আমার বাংলাদেশ — বিস্তারিত</title>
+<meta name="description" content="বাংলাদেশের ৬৪ জেলার দর্শনীয় স্থান ও ভ্রমণ গাইড।">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23006A4E'/><circle cx='50' cy='50' r='26' fill='%23F42A41'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-details">
+
+<header>
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <span class="brand-mark"></span>
+      <span>আমার বাংলাদেশ</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">🗺️ ম্যাপ</a>
+      <a href="details.html" class="active">📖 বিস্তারিত</a>
+    </div>
+    <div class="nav-stats">
+      <div><b id="navVisited">০</b> / ৬৪ জেলা</div>
+    </div>
+  </nav>
+</header>
+
+<section class="details-hero">
+  <div class="details-hero-inner">
+    <h1>৬৪ জেলার দর্শনীয় স্থান</h1>
+    <p>প্রতিটি জেলার সেরা জায়গাগুলো এক জায়গায়। ঘুরুন, চিহ্নিত করুন, আর আপনার অগ্রগতি ট্র্যাক করুন।</p>
+  </div>
+</section>
+
+<div class="details-body">
+  <div class="controls">
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+      </svg>
+      <input type="text" id="search" placeholder="জেলা বা স্থানের নাম লিখুন...">
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- মডাল -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="mTitle">জেলার নাম</h2>
+      <span id="mSub">বিভাগ • স্থান সংখ্যা</span>
+      <button class="close-btn" id="closeModal">×</button>
+    </div>
+    <div class="modal-body" id="mSpots"></div>
+    <button class="visit-btn" id="mVisitBtn">○ ভ্রমণ করেছি হিসেবে চিহ্নিত করুন</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+let visited = getVisited();
+let currentDiv = 'সব';
+let currentQuery = '';
+let activeId = null;
+
+// ট্যাব
+function renderTabs(){
+  const el = document.getElementById('tabs');
+  el.innerHTML = ['সব', ...DIVISIONS].map(d =>
+    `<button class="tab ${d===currentDiv?'active':''}" data-div="${d}">${d}</button>`
+  ).join('');
+  el.querySelectorAll('.tab').forEach(b => {
+    b.addEventListener('click', () => {
+      currentDiv = b.dataset.div;
+      renderTabs(); renderGrid();
+    });
+  });
+}
+
+// গ্রিড
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const q = currentQuery.trim().toLowerCase();
+
+  const filtered = DISTRICTS.filter(d => {
+    if (currentDiv !== 'সব' && d.division !== currentDiv) return false;
+    if (!q) return true;
+    return d.name.toLowerCase().includes(q)
+      || d.division.toLowerCase().includes(q)
+      || d.spots.some(s => s[0].toLowerCase().includes(q) || s[1].toLowerCase().includes(q));
+  });
+
+  if (!filtered.length){
+    grid.innerHTML = `
+      <div class="no-result">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+        </svg>
+        <p>কোনো ফলাফল পাওয়া যায়নি</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(d => {
+    const isV = visited.has(d.id);
+    return `
+      <article class="card ${isV?'visited':''}" data-id="${d.id}">
+        <div class="card-top">
+          <h3>${d.name}</h3>
+          <span class="tick">${isV?'✓':'○'}</span>
+        </div>
+        <span class="badge">${d.division} বিভাগ</span>
+        <p>${d.spots[0][0]}${d.spots[1] ? ' • ' + d.spots[1][0] : ''}${d.spots[2] ? ' সহ আরও...' : ''}</p>
+        <div class="count">📍 ${bn(d.spots.length)}টি দর্শনীয় স্থান</div>
+      </article>`;
+  }).join('');
+
+  grid.querySelectorAll('.card').forEach(c => {
+    c.addEventListener('click', () => openModal(c.dataset.id));
+  });
+}
+
+// মডাল
+const overlay = document.getElementById('overlay');
+
+function openModal(id){
+  const d = getDistrict(id);
+  if (!d) return;
+  activeId = id;
+
+  document.getElementById('mTitle').textContent = d.name + ' জেলা';
+  document.getElementById('mSub').textContent = d.division + ' বিভাগ • ' + bn(d.spots.length) + 'টি দর্শনীয় স্থান';
+  document.getElementById('mSpots').innerHTML = d.spots.map((s,i) => `
+    <div class="spot">
+      <div class="spot-num">${bn(i+1)}</div>
+      <div>
+        <h4>${s[0]}</h4>
+        <p>${s[1]}</p>
+      </div>
+    </div>`).join('');
+
+  updateVisitBtn();
+  overlay.classList.add('open');
+}
+
+function updateVisitBtn(){
+  const btn = document.getElementById('mVisitBtn');
+  if (visited.has(activeId)){
+    btn.textContent = '✓ ভ্রমণ করেছি (মুছতে ক্লিক করুন)';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '○ ভ্রমণ করেছি হিসেবে চিহ্নিত করুন';
+    btn.classList.remove('active');
+  }
+}
+
+function closeModal(){
+  overlay.classList.remove('open');
+  activeId = null;
+  if (location.hash) history.replaceState(null, '', location.pathname);
+}
+
+document.getElementById('closeModal').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('mVisitBtn').addEventListener('click', () => {
+  if (!activeId) return;
+  toggleVisited(activeId);
+  visited = getVisited();
+  updateVisitBtn();
+  renderGrid();
+  updateNavStats();
+});
+
+// সার্চ
+document.getElementById('search').addEventListener('input', e => {
+  currentQuery = e.target.value;
+  renderGrid();
+});
+
+// নেভ স্ট্যাটস
+function updateNavStats(){
+  document.getElementById('navVisited').textContent = bn(visited.size);
+}
+
+// হ্যাশ থেকে মডাল খোলা (details.html#dhaka)
+function checkHash(){
+  const hash = location.hash.replace('#','');
+  if (hash && getDistrict(hash)){
+    openModal(hash);
+  }
+}
+window.addEventListener('hashchange', checkHash);
+
+// ইনিশিয়ালাইজ
+renderTabs();
+renderGrid();
+updateNavStats();
+checkHash();
+</script>
+</body>
+</html>
